@@ -1,0 +1,64 @@
+# Architecture du projet Centre de Santé SOS
+
+## Structure du projet Django
+
+```
+centre_sante_sos/
+¦
++-- centre_sante/             # Projet Django principal
+¦   +-- __init__.py
+¦   +-- settings.py           # Configuration du projet
+¦   +-- urls.py               # URLs principales
+¦   +-- asgi.py
+¦   +-- wsgi.py
+¦
++-- applications/             # Dossier contenant toutes les applications
+¦   +-- utilisateurs/         # Gestion des utilisateurs et authentification
+¦   +-- patients/             # Gestion des patients
+¦   +-- chambres/             # Gestion des chambres
+¦   +-- soins/                # Suivi des soins médicaux
+¦   +-- caisse/               # Gestion financière
+¦   +-- pharmacie/            # Gestion de la pharmacie
+¦   +-- laboratoire/          # Gestion des examens laboratoire
+¦   +-- rapports/             # Rapports et statistiques
+¦
++-- static/                   # Fichiers statiques (CSS, JS, images)
+¦   +-- css/
+¦   +-- js/
+¦   +-- images/
+¦
++-- templates/                # Templates HTML communs
+¦   +-- base.html            
+¦   +-- login.html
+¦   +-- ...
+¦
++-- media/                    # Fichiers téléchargés par les utilisateurs
+¦
++-- requirements.txt          # Dépendances du projet
++-- manage.py                 # Script de gestion Django
+```
+
+## Base de données MySQL
+
+Voici les principales tables de la base de données :
+
+1. **utilisateurs_utilisateur** - Utilisateurs du système
+2. **utilisateurs_profil** - Profils des utilisateurs avec rôle
+3. **utilisateurs_journal** - Journal d'activité
+4. **patients_patient** - Données des patients
+5. **patients_dossiermedical** - Dossiers médicaux
+6. **chambres_chambre** - Chambres hospitalières
+7. **chambres_occupation** - Occupation des chambres
+8. **soins_consultation** - Consultations médicales
+9. **soins_prescription** - Prescriptions médicales
+10. **soins_administrationsoins** - Administration des soins
+11. **laboratoire_examen** - Examens de laboratoire
+12. **laboratoire_resultat** - Résultats d'examens
+13. **caisse_paiement** - Enregistrement des paiements
+14. **caisse_facture** - Factures
+15. **pharmacie_medicament** - Médicaments
+16. **pharmacie_stock** - Gestion des stocks
+17. **rapports_rapport** - Rapports générés
+
+Le système utilisera Django ORM pour interagir avec la base de données MySQL.
+```

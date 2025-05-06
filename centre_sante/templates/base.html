@@ -1,0 +1,569 @@
+<!-- Fichier: templates/base.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Centre de Santé SOS{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Style personnalisé -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'tableau_bord' %}">
+                <i class="fas fa-hospital"></i> Centre de Santé SOS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tableau_bord' %}">
+                            <i class="fas fa-chart-line"></i> Tableau de bord
+                        </a>
+                    </li>
+                    
+                    {% if user.role == 'admin' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarAdmin" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-users-cog"></i> Administration
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'liste_utilisateurs' %}">Gestion des utilisateurs</a></li>
+                            <li><a class="dropdown-item" href="{% url 'journal_activite' %}">Journal d'activité</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.role in 'admin,directeur,infirmier_titulaire,medecin,receptionniste' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'liste_patients' %}">
+                            <i class="fas fa-user-injured"></i> Patients
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.role in 'admin,directeur,infirmier_titulaire' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'liste_chambres' %}">
+                            <i class="fas fa-bed"></i> Chambres
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.role in 'admin,directeur,medecin,infirmier_titulaire,infirmier' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'liste_consultations' %}">
+                            <i class="fas fa-stethoscope"></i> Consultations
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.role in 'caissier' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'caisse_paiements' %}">
+                            <i class="fas fa-cash-register"></i> Caisse
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.role in 'technicien_labo' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'liste_examens' %}">
+                            <i class="fas fa-flask"></i> Laboratoire
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.role in 'pharmacien' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'liste_prescriptions' %}">
+                            <i class="fas fa-pills"></i> Pharmacie
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.role in 'admin,directeur' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'liste_rapports' %}">
+                            <i class="fas fa-chart-bar"></i> Rapports
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown">
+                            {% if user.photo %}
+                                <img src="{{ user.photo.url }}" alt="{{ user.username }}" class="avatar-mini">
+                            {% else %}
+                                <i class="fas fa-user-circle"></i>
+                            {% endif %}
+                            {{ user.first_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'mon_profil' %}"><i class="fas fa-id-card"></i> Mon profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+    
+    <!-- Messages flash -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Contenu principal -->
+    <div class="container my-4">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-light py-3 mt-5">
+        <div class="container text-center">
+            <p class="text-muted mb-0">© {% now "Y" %} Centre de Santé SOS. Tous droits réservés.</p>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
+<!-- Fichier: templates/utilisateurs/login.html -->
+{% extends "base.html" %}
+
+{% block title %}Connexion - Centre de Santé SOS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-hospital me-2"></i>Centre de Santé SOS
+                </h3>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title text-center mb-4">Connexion</h4>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Nom d'utilisateur</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            {{ form.username }}
+                        </div>
+                        {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">Mot de passe</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            {{ form.password }}
+                        </div>
+                        {% if form.password.errors %}
+                            <div class="text-danger">{{ form.password.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Fichier: templates/utilisateurs/liste_utilisateurs.html -->
+{% extends "base.html" %}
+
+{% block title %}Gestion des utilisateurs - Centre de Santé SOS{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0"><i class="fas fa-users-cog me-2"></i>Gestion des utilisateurs</h3>
+        <a href="{% url 'ajouter_utilisateur' %}" class="btn btn-light">
+            <i class="fas fa-user-plus"></i> Ajouter un utilisateur
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nom complet</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Rôle</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>
+                            {% if utilisateur.photo %}
+                                <img src="{{ utilisateur.photo.url }}" alt="{{ utilisateur.username }}" class="avatar-mini me-2">
+                            {% else %}
+                                <i class="fas fa-user-circle me-2"></i>
+                            {% endif %}
+                            {{ utilisateur.first_name }} {{ utilisateur.last_name }}
+                        </td>
+                        <td>{{ utilisateur.username }}</td>
+                        <td>{{ utilisateur.get_role_display }}</td>
+                        <td>{{ utilisateur.email }}</td>
+                        <td>{{ utilisateur.telephone }}</td>
+                        <td>
+                            {% if utilisateur.est_actif %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactif</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'modifier_utilisateur' utilisateur.id %}" class="btn btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'desactiver_utilisateur' utilisateur.id %}" class="btn {% if utilisateur.est_actif %}btn-danger{% else %}btn-success{% endif %}">
+                                    {% if utilisateur.est_actif %}
+                                        <i class="fas fa-user-slash"></i>
+                                    {% else %}
+                                        <i class="fas fa-user-check"></i>
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Aucun utilisateur trouvé</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Fichier: templates/utilisateurs/form_utilisateur.html -->
+{% extends "base.html" %}
+
+{% block title %}{{ titre }} - Centre de Santé SOS{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">
+            {% if form.instance.pk %}
+                <i class="fas fa-user-edit me-2"></i>
+            {% else %}
+                <i class="fas fa-user-plus me-2"></i>
+            {% endif %}
+            {{ titre }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Nom d'utilisateur</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">Prénom</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <div class="text-danger">{{ form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Nom</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <div class="text-danger">{{ form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.role.id_for_label }}" class="form-label">Rôle</label>
+                        {{ form.role }}
+                        {% if form.role.errors %}
+                            <div class="text-danger">{{ form.role.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.telephone.id_for_label }}" class="form-label">Téléphone</label>
+                        {{ form.telephone }}
+                        {% if form.telephone.errors %}
+                            <div class="text-danger">{{ form.telephone.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.photo.id_for_label }}" class="form-label">Photo</label>
+                        {{ form.photo }}
+                        {% if form.photo.errors %}
+                            <div class="text-danger">{{ form.photo.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">Mot de passe</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="text-danger">{{ form.password1.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">{{ form.password1.help_text }}</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmation du mot de passe</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="text-danger">{{ form.password2.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'liste_utilisateurs' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Annuler
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Fichier: templates/utilisateurs/journal_activite.html -->
+{% extends "base.html" %}
+
+{% block title %}Journal d'activité - Centre de Santé SOS{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0"><i class="fas fa-history me-2"></i>Journal d'activité</h3>
+    </div>
+    <div class="card-body">
+        <!-- Filtres -->
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-3">
+                <label for="utilisateur" class="form-label">Utilisateur</label>
+                <select name="utilisateur" id="utilisateur" class="form-select">
+                    <option value="">Tous les utilisateurs</option>
+                    {% for user in utilisateurs %}
+                    <option value="{{ user.id }}" {% if request.GET.utilisateur == user.id|stringformat:"i" %}selected{% endif %}>
+                        {{ user.username }} ({{ user.get_role_display }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="date_debut" class="form-label">Date début</label>
+                <input type="date" name="date_debut" id="date_debut" class="form-control" value="{{ request.GET.date_debut|default:'' }}">
+            </div>
+            <div class="col-md-3">
+                <label for="date_fin" class="form-label">Date fin</label>
+                <input type="date" name="date_fin" id="date_fin" class="form-control" value="{{ request.GET.date_fin|default:'' }}">
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter me-2"></i>Filtrer
+                </button>
+            </div>
+        </form>
+
+        <!-- Table des activités -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Date et heure</th>
+                        <th>Utilisateur</th>
+                        <th>Action</th>
+                        <th>Détails</th>
+                        <th>Adresse IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activite in activites %}
+                    <tr>
+                        <td>{{ activite.date_heure }}</td>
+                        <td>{{ activite.nom_utilisateur }}</td>
+                        <td>{{ activite.action }}</td>
+                        <td>{{ activite.details|default:"-" }}</td>
+                        <td>{{ activite.adresse_ip|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Aucune activité trouvée</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Fichier: templates/utilisateurs/mon_profil.html -->
+{% extends "base.html" %}
+
+{% block title %}Mon profil - Centre de Santé SOS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-id-card me-2"></i>Mon profil</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4">
+                            {% if utilisateur.photo %}
+                                <img src="{{ utilisateur.photo.url }}" alt="{{ utilisateur.username }}" class="img-fluid rounded-circle avatar-large mb-3">
+                            {% else %}
+                                <div class="avatar-placeholder mb-3">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="mb-3">
+                                <label for="photo" class="form-label">Changer ma photo</label>
+                                <input type="file" name="photo" id="photo" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nom d'utilisateur</label>
+                                <input type="text" id="username" class="form-control" value="{{ utilisateur.username }}" disabled>
+                                <div class="form-text">Le nom d'utilisateur ne peut pas être modifié.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="role" class="form-label">Rôle</label>
+                                <input type="text" id="role" class="form-control" value="{{ utilisateur.get_role_display }}" disabled>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="first_name" class="form-label">Prénom</label>
+                                <input type="text" name="first_name" id="first_name" class="form-control" value="{{ utilisateur.first_name }}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="last_name" class="form-label">Nom</label>
+                                <input type="text" name="last_name" id="last_name" class="form-control" value="{{ utilisateur.last_name }}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" name="email" id="email" class="form-control" value="{{ utilisateur.email }}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone</label>
+                                <input type="text" name="telephone" id="telephone" class="form-control" value="{{ utilisateur.telephone|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'tableau_bord' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Retour
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Mettre à jour mon profil
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
