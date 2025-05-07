@@ -1,64 +1,64 @@
-# Architecture du projet Centre de Santé SOS
+# Architecture du projet Centre de SantÃ© SOS
 
 ## Structure du projet Django
 
 ```
 centre_sante_sos/
-¦
+Â¦
 +-- centre_sante/             # Projet Django principal
-¦   +-- __init__.py
-¦   +-- settings.py           # Configuration du projet
-¦   +-- urls.py               # URLs principales
-¦   +-- asgi.py
-¦   +-- wsgi.py
-¦
+Â¦   +-- __init__.py
+Â¦   +-- settings.py           # Configuration du projet
+Â¦   +-- urls.py               # URLs principales
+Â¦   +-- asgi.py
+Â¦   +-- wsgi.py
+Â¦
 +-- applications/             # Dossier contenant toutes les applications
-¦   +-- utilisateurs/         # Gestion des utilisateurs et authentification
-¦   +-- patients/             # Gestion des patients
-¦   +-- chambres/             # Gestion des chambres
-¦   +-- soins/                # Suivi des soins médicaux
-¦   +-- caisse/               # Gestion financière
-¦   +-- pharmacie/            # Gestion de la pharmacie
-¦   +-- laboratoire/          # Gestion des examens laboratoire
-¦   +-- rapports/             # Rapports et statistiques
-¦
+Â¦   +-- utilisateurs/         # Gestion des utilisateurs et authentification
+Â¦   +-- patients/             # Gestion des patients
+Â¦   +-- chambres/             # Gestion des chambres
+Â¦   +-- soins/                # Suivi des soins mÃ©dicaux
+Â¦   +-- caisse/               # Gestion financiÃ¨re
+Â¦   +-- pharmacie/            # Gestion de la pharmacie
+Â¦   +-- laboratoire/          # Gestion des examens laboratoire
+Â¦   +-- rapports/             # Rapports et statistiques
+Â¦
 +-- static/                   # Fichiers statiques (CSS, JS, images)
-¦   +-- css/
-¦   +-- js/
-¦   +-- images/
-¦
+Â¦   +-- css/
+Â¦   +-- js/
+Â¦   +-- images/
+Â¦
 +-- templates/                # Templates HTML communs
-¦   +-- base.html            
-¦   +-- login.html
-¦   +-- ...
-¦
-+-- media/                    # Fichiers téléchargés par les utilisateurs
-¦
-+-- requirements.txt          # Dépendances du projet
+Â¦   +-- base.html            
+Â¦   +-- login.html
+Â¦   +-- ...
+Â¦
++-- media/                    # Fichiers tÃ©lÃ©chargÃ©s par les utilisateurs
+Â¦
++-- requirements.txt          # DÃ©pendances du projet
 +-- manage.py                 # Script de gestion Django
 ```
 
-## Base de données MySQL
+## Base de donnÃ©es MySQL
 
-Voici les principales tables de la base de données :
+Voici les principales tables de la base de donnÃ©es :
 
-1. **utilisateurs_utilisateur** - Utilisateurs du système
-2. **utilisateurs_profil** - Profils des utilisateurs avec rôle
-3. **utilisateurs_journal** - Journal d'activité
-4. **patients_patient** - Données des patients
-5. **patients_dossiermedical** - Dossiers médicaux
-6. **chambres_chambre** - Chambres hospitalières
+1. **utilisateurs_utilisateur** - Utilisateurs du systÃ¨me
+2. **utilisateurs_profil** - Profils des utilisateurs avec rÃ´le
+3. **utilisateurs_journal** - Journal d'activitÃ©
+4. **patients_patient** - DonnÃ©es des patients
+5. **patients_dossiermedical** - Dossiers mÃ©dicaux
+6. **chambres_chambre** - Chambres hospitaliÃ¨res
 7. **chambres_occupation** - Occupation des chambres
-8. **soins_consultation** - Consultations médicales
-9. **soins_prescription** - Prescriptions médicales
+8. **soins_consultation** - Consultations mÃ©dicales
+9. **soins_prescription** - Prescriptions mÃ©dicales
 10. **soins_administrationsoins** - Administration des soins
 11. **laboratoire_examen** - Examens de laboratoire
-12. **laboratoire_resultat** - Résultats d'examens
+12. **laboratoire_resultat** - RÃ©sultats d'examens
 13. **caisse_paiement** - Enregistrement des paiements
 14. **caisse_facture** - Factures
-15. **pharmacie_medicament** - Médicaments
+15. **pharmacie_medicament** - MÃ©dicaments
 16. **pharmacie_stock** - Gestion des stocks
-17. **rapports_rapport** - Rapports générés
+17. **rapports_rapport** - Rapports gÃ©nÃ©rÃ©s
 
-Le système utilisera Django ORM pour interagir avec la base de données MySQL.
+Le systÃ¨me utilisera Django ORM pour interagir avec la base de donnÃ©es MySQL.
 ```
